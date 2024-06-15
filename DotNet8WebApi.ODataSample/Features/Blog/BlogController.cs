@@ -7,85 +7,84 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 
-namespace DotNet8WebApi.ODataSample.Features.Blog
+namespace DotNet8WebApi.ODataSample.Features.Blog;
+
+public class BlogsController : ODataController
 {
-    public class BlogsController : ODataController
+    private readonly AppDbContext _appDbContext;
+
+    public BlogsController(AppDbContext appDbContext)
     {
-        private readonly AppDbContext _appDbContext;
+        _appDbContext = appDbContext;
+    }
 
-        public BlogsController(AppDbContext appDbContext)
+    [EnableQuery]
+    public IQueryable<BlogModel> Get()
+    {
+        return _appDbContext.Blogs;
+    }
+
+    [EnableQuery]
+    public SingleResult<BlogModel> Get([FromODataUri] int key)
+    {
+        var result = _appDbContext.Blogs.Where(b => b.BlogId == key);
+        return SingleResult.Create(result);
+    }
+
+    public async Task<IActionResult> Post([FromBody] BlogModel blog)
+    {
+        if (!ModelState.IsValid)
         {
-            _appDbContext = appDbContext;
+            return BadRequest(ModelState);
         }
 
-        [EnableQuery]
-        public IQueryable<BlogModel> Get()
+        await _appDbContext.Blogs.AddAsync(blog);
+        await _appDbContext.SaveChangesAsync();
+
+        return Created(blog);
+    }
+
+    public async Task<IActionResult> Patch([FromODataUri] int key, [FromBody] BlogModel blog)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var item = await _appDbContext.Blogs.FindAsync(key);
+        if (item is null)
+            return NotFound(MessageResource.NotFound);
+
+        if (!string.IsNullOrEmpty(blog.BlogTitle))
         {
-            return _appDbContext.Blogs;
+            item.BlogTitle = blog.BlogTitle;
         }
 
-        [EnableQuery]
-        public SingleResult<BlogModel> Get([FromODataUri] int key)
+        if (!string.IsNullOrEmpty(blog.BlogAuthor))
         {
-            var result = _appDbContext.Blogs.Where(b => b.BlogId == key);
-            return SingleResult.Create(result);
+            item.BlogAuthor = blog.BlogAuthor;
         }
 
-        public async Task<IActionResult> Post([FromBody] BlogModel blog)
+        if (!string.IsNullOrEmpty(blog.BlogContent))
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            await _appDbContext.Blogs.AddAsync(blog);
-            await _appDbContext.SaveChangesAsync();
-
-            return Created(blog);
+            item.BlogContent = blog.BlogContent;
         }
 
-        public async Task<IActionResult> Patch([FromODataUri] int key, [FromBody] BlogModel blog)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        int result = await _appDbContext.SaveChangesAsync();
 
-            var item = await _appDbContext.Blogs.FindAsync(key);
-            if (item is null)
-                return NotFound(MessageResource.NotFound);
+        return result > 0 ? Accepted() : BadRequest(MessageResource.SaveFail);
+    }
 
-            if (!string.IsNullOrEmpty(blog.BlogTitle))
-            {
-                item.BlogTitle = blog.BlogTitle;
-            }
+    public async Task<IActionResult> Delete([FromODataUri] int key)
+    {
+        if (key <= 0)
+            return BadRequest();
 
-            if (!string.IsNullOrEmpty(blog.BlogAuthor))
-            {
-                item.BlogAuthor = blog.BlogAuthor;
-            }
+        var item = await _appDbContext.Blogs.FindAsync(key);
+        if (item is null)
+            return NotFound(MessageResource.NotFound);
 
-            if (!string.IsNullOrEmpty(blog.BlogContent))
-            {
-                item.BlogContent = blog.BlogContent;
-            }
+        _appDbContext.Blogs.Remove(item);
+        int result = await _appDbContext.SaveChangesAsync();
 
-            int result = await _appDbContext.SaveChangesAsync();
-
-            return result > 0 ? Accepted() : BadRequest(MessageResource.SaveFail);
-        }
-
-        public async Task<IActionResult> Delete([FromODataUri] int key)
-        {
-            if (key <= 0)
-                return BadRequest();
-
-            var item = await _appDbContext.Blogs.FindAsync(key);
-            if (item is null)
-                return NotFound(MessageResource.NotFound);
-
-            _appDbContext.Blogs.Remove(item);
-            int result = await _appDbContext.SaveChangesAsync();
-
-            return result > 0 ? Accepted() : BadRequest(MessageResource.DeleteFail);
-        }
+        return result > 0 ? Accepted() : BadRequest(MessageResource.DeleteFail);
     }
 }
