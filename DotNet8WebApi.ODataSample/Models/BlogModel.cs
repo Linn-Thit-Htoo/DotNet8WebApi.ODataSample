@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DotNet8WebApi.ODataSample.Models
+namespace DotNet8WebApi.ODataSample.Models;
+
+[Table("Tbl_Blog")]
+public class BlogModel
 {
-    [Table("Tbl_Blog")]
-    public class BlogModel
-    {
-        [Key]
-        public int BlogId { get; set; }
-        public string? BlogTitle { get; set; }
-        public string? BlogAuthor { get; set; }
-        public string? BlogContent { get; set; }
-    }
+    [Key]
+    public int BlogId { get; set; }
+    public string? BlogTitle { get; set; }
+    public string? BlogAuthor { get; set; }
+    public string? BlogContent { get; set; }
 }
