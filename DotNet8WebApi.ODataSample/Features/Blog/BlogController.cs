@@ -1,14 +1,11 @@
 ﻿using DotNet8WebApi.ODataSample.Database;
 using DotNet8WebApi.ODataSample.Models;
 using DotNet8WebApi.ODataSample.Resource;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Microsoft.EntityFrameworkCore;
 
 namespace DotNet8WebApi.ODataSample.Features.Blog
 {
