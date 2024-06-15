@@ -1,6 +1,4 @@
-﻿using DotNet8WebApi.ODataSample.Database;
-using DotNet8WebApi.ODataSample.Models;
-using DotNet8WebApi.ODataSample.Resource;
+﻿using DotNet8WebApi.ODataSample.Resource;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;

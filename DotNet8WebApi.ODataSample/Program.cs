@@ -1,10 +1,3 @@
-using DotNet8WebApi.ODataSample.Database;
-using DotNet8WebApi.ODataSample.Models;
-using Microsoft.AspNetCore.OData;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OData.Edm;
-using Microsoft.OData.ModelBuilder;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()

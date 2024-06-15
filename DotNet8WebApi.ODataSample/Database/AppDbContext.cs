@@ -1,7 +1,4 @@
-﻿using DotNet8WebApi.ODataSample.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace DotNet8WebApi.ODataSample.Database;
+﻿namespace DotNet8WebApi.ODataSample.Database;
 
 public class AppDbContext : DbContext
 {
