@@ -1,25 +1,32 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
+builder
+    .Services.AddControllers()
     .AddOData(options =>
-        options.AddRouteComponents("odata", GetEdmModel())
-           .Select()
-           .Expand()
-           .Filter()
-           .OrderBy()
-           .Count()
-           .SetMaxTop(100)
-           .SkipToken()).AddJsonOptions(opt =>
-           {
-               opt.JsonSerializerOptions.PropertyNamingPolicy = null;
-           });
+        options
+            .AddRouteComponents("odata", GetEdmModel())
+            .Select()
+            .Expand()
+            .Filter()
+            .OrderBy()
+            .Count()
+            .SetMaxTop(100)
+            .SkipToken()
+    )
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDbContext>(opt =>
-{
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection"));
-}, ServiceLifetime.Transient);
+builder.Services.AddDbContext<AppDbContext>(
+    opt =>
+    {
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection"));
+    },
+    ServiceLifetime.Transient
+);
 
 var app = builder.Build();
 
